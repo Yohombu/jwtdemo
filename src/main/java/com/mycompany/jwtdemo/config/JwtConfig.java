@@ -1,5 +1,6 @@
 package com.mycompany.jwtdemo.config;
 
+import com.mycompany.jwtdemo.filter.JwtAuthenticationFilter;
 import com.mycompany.jwtdemo.service.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -20,6 +22,10 @@ public class JwtConfig extends WebSecurityConfigurerAdapter {
     //singleton dependancy injection
     @Autowired
     private CustomUserDetailService customUserDetailService;
+
+    @Autowired
+    private JwtAuthenticationFilter jwtFilter;
+
     //here we say how we want to manage our authentication process
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -40,6 +46,8 @@ public class JwtConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated() //for any other request, authentication should performed
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // every request should be independent of other server does not have to manage session
+
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
     @Bean
     public PasswordEncoder passwordEncoder(){
