@@ -21,11 +21,11 @@ import java.io.IOException;
 
 //call this filter only once per request
 @Component
-
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private CustomUserDetailService customUserDetailService;
+
     @Autowired
     private JwtUtil jwtUtil;
 
